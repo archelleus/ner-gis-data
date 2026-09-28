@@ -1,0 +1,38 @@
+# ==============================================================================
+# Git Ignore Rules for NER GIS Open Source Repository
+# ==============================================================================
+
+# Python environments and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# Raw heavy datasets (> 1 GB raw downloads)
+data/raw/
+dem_tiles/
+
+# Heavy raster GeoTIFF files (> 100 MB, exceeding GitHub standard file limits)
+# Note: Instructions to download or generate full-resolution 30m COGs are in README.md
+*.tif
+*.tiff
+terrain/*.tif
+web/*.tif
+*.aux.xml
+
+# Distribution zip archives (hosted on GitHub Releases, generated via scripts/package_release.sh)
+*.zip
+
+# System and IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log

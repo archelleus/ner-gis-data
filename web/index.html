@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>North Eastern Region (NER) GIS Explorer</title>
+  <meta name="description" content="Interactive web map for the North Eastern Region of India featuring administrative boundaries, 30m SRTM terrain, slope, and OSM infrastructure." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- MapLibre GL JS -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+  <!-- PMTiles Protocol Plugin -->
+  <script src="https://unpkg.com/pmtiles@3.0.6/dist/pmtiles.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=20260906_3" />
+</head>
+<body>
+  <div id="app">
+    <!-- Top Navigation & Branding Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <i class="fa-solid fa-mountain-sun"></i>
+        </div>
+        <div class="brand-text">
+          <h1>NER GIS Explorer</h1>
+          <span class="brand-subtitle">North Eastern Region of India &bull; 8 States &bull; 119 Districts &bull; 30m Terrain</span>
+        </div>
+      </div>
+
+      <!-- State Quick-Jump Pills -->
+      <div class="state-quicknav" id="stateQuickNav">
+        <button class="nav-pill active" data-state="ALL">All NER</button>
+        <button class="nav-pill" data-state="Arunachal Pradesh">Arunachal</button>
+        <button class="nav-pill" data-state="Assam">Assam</button>
+        <button class="nav-pill" data-state="Manipur">Manipur</button>
+        <button class="nav-pill" data-state="Meghalaya">Meghalaya</button>
+        <button class="nav-pill" data-state="Mizoram">Mizoram</button>
+        <button class="nav-pill" data-state="Nagaland">Nagaland</button>
+        <button class="nav-pill" data-state="Sikkim">Sikkim</button>
+        <button class="nav-pill" data-state="Tripura">Tripura</button>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button class="action-btn" id="btnTogglePanel" title="Toggle Layer Controls">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Layers</span>
+        </button>
+        <button class="action-btn" id="btnFitAll" title="Fit to Full NER Extent">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Map Viewport -->
+    <div id="map"></div>
+
+    <!-- Floating Glassmorphic Control Panel -->
+    <aside class="sidebar-panel" id="sidebarPanel">
+      <div class="panel-tabs">
+        <button class="tab-btn active" data-tab="layersTab">
+          <i class="fa-solid fa-sliders"></i> Layers
+        </button>
+        <button class="tab-btn" data-tab="inspectorTab">
+          <i class="fa-solid fa-circle-info"></i> Inspector
+        </button>
+        <button class="tab-btn" data-tab="catalogTab">
+          <i class="fa-solid fa-database"></i> Catalog
+        </button>
+      </div>
+
+      <!-- TAB 1: Layers & Styling -->
+      <div class="panel-content active" id="layersTab">
+        <!-- Basemap Selection -->
+        <section class="control-section">
+          <label class="section-title"><i class="fa-solid fa-map"></i> Basemap Style</label>
+          <div class="basemap-grid">
+            <button class="basemap-card active" data-base="osm">
+              <div class="thumb thumb-osm"></div>
+              <span>OpenStreetMap</span>
+            </button>
+            <button class="basemap-card" data-base="dark">
+              <div class="thumb thumb-dark"></div>
+              <span>Dark Canvas</span>
+            </button>
+            <button class="basemap-card" data-base="satellite">
+              <div class="thumb thumb-sat"></div>
+              <span>Satellite</span>
+            </button>
+            <button class="basemap-card" data-base="topo">
+              <div class="thumb thumb-topo"></div>
+              <span>OpenTopoMap</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 30m Terrain Rasters -->
+        <section class="control-section">
+          <label class="section-title"><i class="fa-solid fa-mountain"></i> 30 m Terrain Rasters</label>
+
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkHillshade" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <strong>Shaded Relief & DEM</strong>
+                <span class="subtext">30m SRTM Skadi Hypsometric</span>
+              </div>
+            </div>
+            <div class="opacity-control">
+              <span class="op-label">Opacity: <span id="valHillshade">70%</span></span>
+              <input type="range" id="rngHillshade" min="0" max="100" value="70" />
+            </div>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkSlope" />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <strong>Terrain Slope Heatmap</strong>
+                <span class="subtext">0° - 89° Incline in Degrees</span>
+              </div>
+            </div>
+            <div class="opacity-control">
+              <span class="op-label">Opacity: <span id="valSlope">65%</span></span>
+              <input type="range" id="rngSlope" min="0" max="100" value="65" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Vector Layers (PMTiles) -->
+        <section class="control-section">
+          <label class="section-title"><i class="fa-solid fa-draw-polygon"></i> Vector Layers (PMTiles)</label>
+
+          <!-- States -->
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkStates" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <span class="swatch swatch-state"></span>
+                <strong>State Boundaries</strong>
+                <span class="subtext">8 NER States (ADM1)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Districts -->
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkDistricts" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <span class="swatch swatch-district"></span>
+                <strong>District Boundaries</strong>
+                <span class="subtext">119 Districts (ADM2)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Roads -->
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkRoads" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <span class="swatch swatch-road"></span>
+                <strong>Road Network</strong>
+                <span class="subtext">13,052 Segments (NH / SH)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rivers -->
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkRivers" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <span class="swatch swatch-river"></span>
+                <strong>Rivers & Waterways</strong>
+                <span class="subtext">4,155 River Channels</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settlements -->
+          <div class="layer-item">
+            <div class="layer-header">
+              <label class="custom-switch">
+                <input type="checkbox" id="chkSettlements" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="layer-label">
+                <span class="swatch swatch-settlement"></span>
+                <strong>Populated Places</strong>
+                <span class="subtext">5,918 Cities, Towns, Villages</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 2: Feature Inspector -->
+      <div class="panel-content" id="inspectorTab">
+        <div class="inspector-prompt" id="inspectorPrompt">
+          <i class="fa-solid fa-crosshairs"></i>
+          <p>Click on any state, district, highway, river, or town on the map to inspect its attributes.</p>
+        </div>
+        <div class="inspector-details" id="inspectorDetails" style="display: none;">
+          <div class="feature-badge" id="featTypeBadge">State</div>
+          <h3 id="featTitle">Assam</h3>
+          <div class="prop-table" id="featPropsTable"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Dataset Catalog & Metrics -->
+      <div class="panel-content" id="catalogTab">
+        <div class="catalog-card">
+          <h4><i class="fa-solid fa-cube"></i> PMTiles Vector Archive</h4>
+          <p>Single binary tile archive hosting 5 consolidated vector layers.</p>
+          <ul>
+            <li><strong>File:</strong> <code>web/ner_map.pmtiles</code></li>
+            <li><strong>Size:</strong> 13.8 MB (Compressed)</li>
+            <li><strong>Zooms:</strong> 4 - 12 (Infinite Overzooming)</li>
+            <li><strong>Features:</strong> 23,252 total geometry objects</li>
+          </ul>
+        </div>
+
+        <div class="catalog-card">
+          <h4><i class="fa-solid fa-mountain"></i> 30m Digital Elevation Model</h4>
+          <ul>
+            <li><strong>Source:</strong> NASA/USGS SRTM Skadi</li>
+            <li><strong>Resolution:</strong> 1 arc-second (~30.8 m)</li>
+            <li><strong>Dimensions:</strong> 33,832 x 27,073 pixels</li>
+            <li><strong>Elevation Range:</strong> -443 m to 8,375 m</li>
+          </ul>
+        </div>
+
+        <div class="catalog-card">
+          <h4><i class="fa-solid fa-compass-drafting"></i> Terrain Slope</h4>
+          <ul>
+            <li><strong>Algorithm:</strong> Horn's Geodesic Slope</li>
+            <li><strong>Range:</strong> 0.00° (Plains) to 89.13° (Cliffs)</li>
+            <li><strong>Mean Slope:</strong> 16.36°</li>
+            <li><strong>Alignment:</strong> 100% 1-to-1 match with DEM</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Floating HUD Metrics Bar -->
+    <div class="hud-bar">
+      <div class="hud-item">
+        <span class="hud-label">CRS</span>
+        <span class="hud-val">EPSG:4326</span>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="hud-item">
+        <span class="hud-label">COORDINATES</span>
+        <span class="hud-val" id="hudCoords">92.712°E, 25.701°N</span>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="hud-item">
+        <span class="hud-label">ZOOM</span>
+        <span class="hud-val" id="hudZoom">6.50</span>
+      </div>
+    </div>
+
+    <!-- Collapsible Legend Card -->
+    <div class="map-legend" id="mapLegend">
+      <div class="legend-header" id="btnToggleLegend">
+        <span><i class="fa-solid fa-list-check"></i> Legend</span>
+        <i class="fa-solid fa-chevron-down" id="legendChevron"></i>
+      </div>
+      <div class="legend-body" id="legendBody">
+        <div class="leg-item"><span class="leg-line leg-state"></span> State Outline</div>
+        <div class="leg-item"><span class="leg-line leg-dist"></span> District Division</div>
+        <div class="leg-item"><span class="leg-line leg-hwy"></span> National Highway (Trunk)</div>
+        <div class="leg-item"><span class="leg-line leg-sh"></span> State Highway (Primary)</div>
+        <div class="leg-item"><span class="leg-line leg-river"></span> River / Waterway</div>
+        <div class="leg-item"><span class="leg-circle leg-city"></span> Major City</div>
+        <div class="leg-item"><span class="leg-circle leg-town"></span> Town</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="app.js?v=20260906_3"></script>
+</body>
+</html>

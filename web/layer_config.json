@@ -1,0 +1,196 @@
+{
+  "project": "North Eastern Region (NER) India GIS Web Assets",
+  "version": "1.0.0",
+  "crs": "EPSG:4326",
+  "bounds": [
+    88.013472,
+    21.94125,
+    97.41125,
+    29.461528
+  ],
+  "center": [
+    92.712361,
+    25.701389,
+    7
+  ],
+  "vector_source": {
+    "name": "ner_vector_tiles",
+    "file": "ner_map.pmtiles",
+    "type": "vector",
+    "format": "pmtiles",
+    "bounds": [
+      88.013472,
+      21.94125,
+      97.41125,
+      29.461528
+    ],
+    "minzoom": 4,
+    "maxzoom": 12,
+    "description": "Integrated vector tile archive containing all 5 administrative and OSM feature layers for NER.",
+    "layers": [
+      {
+        "id": "states",
+        "source_layer": "states",
+        "geometry_type": "Polygon",
+        "minzoom": 4,
+        "maxzoom": 18,
+        "description": "State administrative boundaries for all 8 NER states (Arunachal Pradesh, Assam, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura).",
+        "attributes": {
+          "state_name": "Name of the state",
+          "shapeID": "Authoritative geoBoundaries identifier",
+          "shapeISO": "ISO state code"
+        },
+        "default_style": {
+          "fill_color": "rgba(255, 255, 255, 0.0)",
+          "line_color": "#0F172A",
+          "line_width": 2.0
+        }
+      },
+      {
+        "id": "districts",
+        "source_layer": "districts",
+        "geometry_type": "Polygon",
+        "minzoom": 6,
+        "maxzoom": 18,
+        "description": "District administrative boundaries (119 districts across 8 NER states).",
+        "attributes": {
+          "district_name": "Name of the district",
+          "state_name": "Parent state name",
+          "admin_level": "Administrative level (ADM2)",
+          "shapeID": "Authoritative boundary ID"
+        },
+        "default_style": {
+          "fill_color": "rgba(100, 116, 139, 0.05)",
+          "line_color": "#475569",
+          "line_width": 1.0,
+          "line_dasharray": [
+            3,
+            2
+          ]
+        }
+      },
+      {
+        "id": "roads",
+        "source_layer": "roads",
+        "geometry_type": "LineString",
+        "minzoom": 6,
+        "maxzoom": 18,
+        "description": "Transportation network categorized into motorways/trunk (NH), primary, secondary, and tertiary arterials.",
+        "attributes": {
+          "name": "Road name",
+          "ref": "National/State highway reference code (e.g., NH-27)",
+          "road_type": "Functional class (motorway, trunk, primary, secondary, tertiary)",
+          "surface": "Pavement surface type (paved, unpaved)",
+          "state_name": "Parent state name"
+        },
+        "default_style": {
+          "line_color": "#EA580C",
+          "line_width": 1.5
+        }
+      },
+      {
+        "id": "rivers",
+        "source_layer": "rivers",
+        "geometry_type": "LineString",
+        "minzoom": 5,
+        "maxzoom": 18,
+        "description": "Hydrographic waterways covering the Brahmaputra, Barak, and tributary river networks.",
+        "attributes": {
+          "name": "Waterway name",
+          "waterway": "Type of waterway (river, canal, stream)",
+          "state_name": "Parent state name"
+        },
+        "default_style": {
+          "line_color": "#0284C7",
+          "line_width": 1.2
+        }
+      },
+      {
+        "id": "settlements",
+        "source_layer": "settlements",
+        "geometry_type": "Point",
+        "minzoom": 6,
+        "maxzoom": 18,
+        "description": "Populated places including major cities, towns, and regional villages.",
+        "attributes": {
+          "name": "Settlement name",
+          "settlement_type": "Hierarchy (city, town, village)",
+          "population": "Reported population where available",
+          "district_name": "Parent district name",
+          "state_name": "Parent state name"
+        },
+        "default_style": {
+          "circle_radius": 4,
+          "circle_color": "#DC2626",
+          "circle_stroke_color": "#FFFFFF",
+          "circle_stroke_width": 1.5
+        }
+      }
+    ]
+  },
+  "raster_layers": [
+    {
+      "id": "ner_elevation",
+      "file": "ner_elevation.tif",
+      "type": "raster",
+      "format": "Cloud-Optimized GeoTIFF (COG)",
+      "crs": "EPSG:4326",
+      "bounds": [
+        88.013472,
+        21.94125,
+        97.41125,
+        29.461528
+      ],
+      "minzoom": 4,
+      "maxzoom": 14,
+      "datatype": "Int16",
+      "nodata": -32768,
+      "min_value": -443,
+      "max_value": 8375,
+      "units": "meters above sea level",
+      "description": "1 arc-second (~30 m) SRTM Skadi regional digital elevation model clipped to NER state boundaries with internal multi-resolution pyramids."
+    },
+    {
+      "id": "ner_hillshade",
+      "file": "ner_hillshade.tif",
+      "type": "raster",
+      "format": "Cloud-Optimized GeoTIFF (COG)",
+      "crs": "EPSG:4326",
+      "bounds": [
+        88.013472,
+        21.94125,
+        97.41125,
+        29.461528
+      ],
+      "minzoom": 4,
+      "maxzoom": 14,
+      "datatype": "Byte (UInt8)",
+      "nodata": 0,
+      "min_value": 1,
+      "max_value": 255,
+      "units": "illumination value (0-255)",
+      "description": "Latitude-scaled shaded relief raster calculated with 315\u00b0 NW azimuth and 45\u00b0 solar elevation, tiled with internal overviews."
+    },
+    {
+      "id": "ner_slope",
+      "file": "ner_slope.tif",
+      "type": "raster",
+      "format": "Cloud-Optimized GeoTIFF (COG)",
+      "crs": "EPSG:4326",
+      "bounds": [
+        88.013472,
+        21.94125,
+        97.41125,
+        29.461528
+      ],
+      "minzoom": 4,
+      "maxzoom": 14,
+      "datatype": "Float32",
+      "nodata": -9999.0,
+      "min_value": 0.0,
+      "max_value": 89.13,
+      "units": "degrees (\u00b0)",
+      "description": "Physically accurate terrain slope in degrees derived from 30 m DEM, 1-to-1 pixel aligned with elevation and hillshade grids."
+    }
+  ]
+}
