@@ -5,6 +5,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/archelleus/ner-gis-data/releases/latest"><img src="https://img.shields.io/github/v/release/archelleus/ner-gis-data?color=blue&label=Release" alt="Latest Release"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/Code%20License-MIT-blue.svg" alt="MIT License"></a>
   <a href="https://opendatacommons.org/licenses/odbl/"><img src="https://img.shields.io/badge/Data%20License-ODbL%201.0-green.svg" alt="ODbL License"></a>
   <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/Boundaries-CC%20BY%204.0-lightgrey.svg" alt="CC BY 4.0"></a>
@@ -200,6 +201,6 @@ If you use this dataset in your research or project, please cite:
   author = {NER GIS Open Source Contributors},
   title = {Northeast India (NER) Open GIS Dataset: Validated Multi-Layer GeoJSON, 30m Topography, and Machine Learning Features},
   year = {2026},
-  url = {https://github.com/bhavya-jain/ner-gis-data}
+  url = {https://github.com/archelleus/ner-gis-data}
 }
 ```

@@ -4,7 +4,7 @@ authors:
   - name: "NER GIS Open Source Project Contributors"
 title: "Northeast India (NER) Open GIS Dataset: Validated Multi-Layer GeoJSON, 30m Topography, PMTiles, and Machine Learning Features"
 date-released: 2026-09-28
-url: "https://github.com/bhavya-jain/ner-gis-data"
+url: "https://github.com/archelleus/ner-gis-data"
 keywords:
   - "gis"
   - "northeast india"
